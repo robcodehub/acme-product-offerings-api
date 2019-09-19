@@ -36,13 +36,12 @@ const Product = conn.define('product', {
 })
 
 Company.hasMany(Product);
-Offering.hasMany(Company);
+Company.hasMany(Offering);
+Product.hasMany(Offering);
 
 Product.belongsTo(Company);
-Company.belongsTo(Offering);
-
-Offering.hasMany(Product);
-Product.belongsTo(Offering);
+Offering.belongsTo(Company);
+Offering.belongsTo(Product);
 
 // const mapPromise = (items, model)=> {
 //   return Promise.all(items.map( item => model.create(item)));
@@ -50,8 +49,30 @@ Product.belongsTo(Offering);
 
 const syncAndSeed = async ()=> {
   await conn.sync({ force: true });
+  const companies = [
+    { name: 'CBS'},
+    { name: 'NBC'},
+    { name: 'Blockbuster'}
+  ];
 
-}
+  const [CBS, NBC, Blockbuster] = await Promise.all(companies.map( company => Company.create(company)));
+
+  const products = [
+    { name: 'Commercials', suggestedPrice: 2},
+    { name: 'WebAds', suggestedPrice: 1.53},
+    { name: 'Bloatware', suggestedPrice: 0.73}
+  ];
+
+  const [Commercials, WebAds, Bloatware] = await Promise.all(products.map( product => Product.create(product)));
+
+  const offerings = [
+    { name: 'Commercials1', price: 3, productId: Commercials.id, companyId: CBS.id},
+    { name: 'WebAds1', price: 2, productId: WebAds.id, companyId: CBS.id},
+    { name: 'Bloatwares1', price: 1, productId: Bloatware.id, companyId: NBC.id},
+  ];
+
+  const [Commercials1, WebAds1, Bloatware1] = await Promise.all(offerings.map( offering => Offering.create(offering)));
+};
 
 
 

@@ -18,7 +18,7 @@ app.get('/products', (req, res, next)=> {
     .catch(next);
 });
 
-app.get('/offereings', (req, res, next)=> {
+app.get('/offerings', (req, res, next)=> {
   Offering.findAll()
     .then( offereings => res.send(offereings) )
     .catch(next);
